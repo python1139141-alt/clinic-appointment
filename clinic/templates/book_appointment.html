@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Book Appointment{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white border-0 pb-0">
+                <h1 class="h4 mb-1">Book an Appointment</h1>
+                <p class="text-muted small mb-3">
+                    Fill the form below to request an appointment. You will receive confirmation after approval.
+                </p>
+            </div>
+            <div class="card-body pt-0">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" name="name" class="form-control form-control-lg"
+                               value="{{ form.name.value|default_if_none:'' }}" required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Phone</label>
+                            <input type="text" name="phone" class="form-control"
+                                   value="{{ form.phone.value|default_if_none:'' }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email" class="form-control"
+                                   value="{{ form.email.value|default_if_none:'' }}" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                            <label class="form-label">Doctor</label>
+                        <select name="doctor" class="form-select form-select-lg" required>
+                            <option value="">Select doctor</option>
+                            {% for doctor in doctors %}
+                                <option value="{{ doctor.id }}"
+                                        {% if request.GET.doctor|stringformat:'s' == doctor.id|stringformat:'s' or form.doctor.value|stringformat:'s' == doctor.id|stringformat:'s' %}selected{% endif %}>
+                                    {{ doctor.name }} ({{ doctor.specialization.name }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Date</label>
+                            <input type="date" name="date" class="form-control"
+                                   value="{{ form.date.value|default_if_none:'' }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Time Slot</label>
+                            <input type="text" name="time" class="form-control"
+                                   placeholder="e.g. 10:00 AM"
+                                   value="{{ form.time.value|default_if_none:'' }}" required>
+                            <div class="form-text">
+                                Choose a time from doctor's available slots.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Notes (optional)</label>
+                        <textarea name="notes" rows="3" class="form-control">{{ form.notes.value|default_if_none:'' }}</textarea>
+                    </div>
+
+                    {% if form.errors or form.non_field_errors %}
+                        <div class="alert alert-danger alert-soft mt-2">
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                    <div>{{ error }}</div>
+                                {% endfor %}
+                            {% endfor %}
+                            {% for error in form.non_field_errors %}
+                                <div>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <button class="btn btn-primary btn-lg mt-2">
+                        <i class="bi bi-send"></i> Submit Request
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

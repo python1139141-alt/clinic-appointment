@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load form_extras %}
+
+{% block title %}Manage Specializations{% endblock %}
+
+{% block content %}
+<h1 class="h4 mb-3">Manage Specializations</h1>
+
+<div class="row">
+    <div class="col-md-5 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="h6 mb-3">Add New Specialization</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Name</label>
+                        {{ form.name|add_class:"form-control" }}
+                    </div>
+                    <button class="btn btn-primary w-100">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-7 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="h6 mb-3">Existing Specializations</h2>
+                <ul class="list-group list-group-flush">
+                    {% for spec in specializations %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ spec.name }}
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item text-muted">No specializations yet.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
