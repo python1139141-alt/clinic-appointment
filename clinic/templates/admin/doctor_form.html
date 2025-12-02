@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load form_extras %}
+
+{% block title %}Edit Doctor{% endblock %}
+
+{% block content %}
+<h1 class="h4 mb-3">Edit Doctor</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+                    <div class="mb-2">
+                        <label class="form-label">Name</label>
+                        {{ form.name|add_class:"form-control" }}
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Specialization</label>
+                        {{ form.specialization|add_class:"form-select" }}
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">Experience (years)</label>
+                            {{ form.experience|add_class:"form-control" }}
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">Fees</label>
+                            {{ form.fees|add_class:"form-control" }}
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Available Days</label>
+                        {{ form.available_days|add_class:"form-control" }}
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Time Slots</label>
+                        {{ form.time_slots|add_class:"form-control" }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Biography</label>
+                        {{ form.biography|add_class:"form-control" }}
+                    </div>
+                    <button class="btn btn-primary">Save Changes</button>
+                    <a href="{% url 'admin_doctors' %}" class="btn btn-outline-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

@@ -1,0 +1,217 @@
+:root {
+    --bg-body: radial-gradient(circle at top left, #e5f3ff, #f9fafb);
+    --bg-card: #ffffff;
+    --bg-card-soft: #eff6ff;
+    --bg-navbar: linear-gradient(135deg, #0f766e, #2563eb);
+    --border-subtle: rgba(15, 23, 42, 0.08);
+    --text-main: #111827;
+    --text-muted: #6b7280;
+    --shadow-soft: 0 0.75rem 1.5rem rgba(15, 23, 42, 0.12);
+}
+
+/* Global layout */
+body.app-body {
+    background: var(--bg-body);
+    min-height: 100vh;
+    color: var(--text-main);
+    transition: background 0.25s ease, color 0.25s ease;
+}
+
+.page-container {
+    padding-bottom: 2rem;
+}
+
+/* Navbar */
+.bg-gradient-primary {
+    background: var(--bg-navbar);
+    transition: background 0.25s ease, box-shadow 0.25s ease;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    letter-spacing: 0.03em;
+}
+
+.brand-icon {
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    font-size: 0.9rem;
+}
+
+.navbar-nav .nav-link {
+    position: relative;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.navbar-nav .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 2px;
+    background-color: rgba(255, 255, 255, 0.85);
+    transition: width 0.2s ease;
+}
+
+.navbar-nav .nav-link:hover {
+    transform: translateY(-1px);
+}
+
+.navbar-nav .nav-link:hover::after {
+    width: 100%;
+}
+
+/* Cards and hover effects */
+.card {
+    border-radius: 0.75rem;
+    background-color: var(--bg-card);
+    border-color: var(--border-subtle);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.25s ease, border-color 0.25s ease;
+}
+
+.card.shadow-sm,
+.card.shadow {
+    box-shadow: 0 0.25rem 0.8rem rgba(15, 23, 42, 0.08);
+}
+
+.card.shadow-sm:hover,
+.card.shadow:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-soft);
+}
+
+/* Buttons */
+.btn {
+    border-radius: 999px;
+    font-weight: 500;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0.5rem 1rem rgba(15, 23, 42, 0.2);
+}
+
+/* Animations */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeDown {
+    from {
+        opacity: 0;
+        transform: translateY(-12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-up {
+    animation: fadeUp 0.45s ease-out;
+}
+
+.animate-fade-down {
+    animation: fadeDown 0.45s ease-out;
+}
+
+/* Hero image */
+.hero-illustration {
+    filter: drop-shadow(0 0.75rem 1.5rem rgba(15, 23, 42, 0.25));
+    border-radius: 1.25rem;
+}
+
+/* Doctor cards */
+.doctor-card {
+    background: radial-gradient(circle at top left, var(--bg-card), var(--bg-card-soft));
+}
+
+.doctor-avatar {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    box-shadow: 0 0.5rem 1rem rgba(15, 23, 42, 0.2);
+}
+
+/* Tables */
+table.table tr:hover {
+    background-color: rgba(13, 110, 253, 0.03);
+}
+
+/* Footer */
+.app-footer {
+    backdrop-filter: blur(6px);
+    background-color: rgba(255, 255, 255, 0.9);
+    border-top: 1px solid var(--border-subtle);
+}
+
+body[data-theme="dark"] .app-footer {
+    background-color: rgba(15, 23, 42, 0.98);
+}
+
+/* Soft alerts */
+.alert-soft {
+    border-radius: 0.75rem;
+    border: 1px solid rgba(220, 53, 69, 0.2);
+    background-color: rgba(220, 53, 69, 0.05);
+}
+
+/* Footer brand animation */
+.footer-brand {
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-main);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+body[data-theme="dark"] .footer-brand {
+    color: #e5e7eb;
+}
+
+.footer-brand-prefix {
+    opacity: 0.85;
+}
+
+.footer-brand-main {
+    background: linear-gradient(90deg, #22c55e, #0ea5e9, #a855f7);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: footerPulse 3s ease-in-out infinite;
+}
+
+.footer-brand-dot {
+    opacity: 0.6;
+}
+
+@keyframes footerPulse {
+    0% {
+        opacity: 0.7;
+        filter: drop-shadow(0 0 0 rgba(34, 197, 94, 0));
+    }
+    50% {
+        opacity: 1;
+        filter: drop-shadow(0 0 10px rgba(34, 197, 94, 0.45));
+    }
+    100% {
+        opacity: 0.7;
+        filter: drop-shadow(0 0 0 rgba(34, 197, 94, 0));
+    }
+}
+
+

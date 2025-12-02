@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Appointment History{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h1 class="h4 mb-3">Check Appointment History</h1>
+                <p class="text-muted small">
+                    Enter your email to see your previous and upcoming appointments.
+                </p>
+                <form method="post" class="row gy-2 gx-2 align-items-end">
+                    {% csrf_token %}
+                    <div class="col-md-8">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control"
+                               value="{{ email|default_if_none:'' }}" required>
+                    </div>
+                    <div class="col-md-4">
+                        <button class="btn btn-primary w-100">
+                            <i class="bi bi-search"></i> Search
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {% if appointments %}
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="h5 mb-3">Your Appointments</h2>
+                    <div class="table-responsive">
+                        <table class="table table-striped align-middle mb-0">
+                            <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Doctor</th>
+                                <th>Status</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for appt in appointments %}
+                                <tr>
+                                    <td>{{ appt.date }}</td>
+                                    <td>{{ appt.time }}</td>
+                                    <td>{{ appt.doctor.name }}</td>
+                                    <td>
+                                        <span class="badge
+                                            {% if appt.status == 'Pending' %}bg-warning text-dark
+                                            {% elif appt.status == 'Approved' %}bg-success
+                                            {% else %}bg-secondary{% endif %}">
+                                            {{ appt.status }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+
