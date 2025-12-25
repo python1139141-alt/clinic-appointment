@@ -13,7 +13,7 @@
                     <strong>Experience:</strong> {{ doctor.experience }} years
                 </p>
                 <p class="mb-1">
-                    <strong>Consultation Fee:</strong> {{ doctor.fees }}
+                    <strong>Consultation Fee:</strong> PKR {{ doctor.fees }}
                 </p>
                 <p class="mb-1">
                     <strong>Available Days:</strong> {{ doctor.available_days }}
@@ -22,8 +22,8 @@
                     <strong>Time Slots:</strong> {{ doctor.time_slots }}
                 </p>
                 {% if doctor.biography %}
-                    <hr>
-                    <p class="mb-0">{{ doctor.biography }}</p>
+                <hr>
+                <p class="mb-0">{{ doctor.biography }}</p>
                 {% endif %}
             </div>
         </div>
@@ -46,5 +46,3 @@
     </div>
 </div>
 {% endblock %}
-
-

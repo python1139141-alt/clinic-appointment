@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.db.models import Count
+from django.http import JsonResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
@@ -10,8 +11,11 @@ from .forms import (
     AppointmentStatusForm,
     DoctorForm,
     SpecializationForm,
+    PatientSignupForm,
 )
 from .models import Appointment, Doctor, Patient, Specialization
+from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
 
 
 def home(request):
@@ -34,6 +38,17 @@ def home(request):
     )
 
 
+def signup(request):
+    form = PatientSignupForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        user = form.save()
+        login(request, user)
+        messages.success(request, "Account created successfully.")
+        return redirect("home")
+    return render(request, "registration/signup.html", {"form": form})
+
+
+
 def doctor_list(request):
     specialization_id = request.GET.get("specialization")
     doctors = Doctor.objects.select_related("specialization")
@@ -52,16 +67,17 @@ def doctor_detail(request, pk):
     return render(request, "doctor_detail.html", {"doctor": doctor})
 
 
+
+@login_required
 def book_appointment(request):
     form = AppointmentForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
-        patient, _ = Patient.objects.update_or_create(
-            email=form.cleaned_data["email"],
-            defaults={
-                "name": form.cleaned_data["name"],
-                "phone": form.cleaned_data["phone"],
-            },
-        )
+        try:
+            patient = request.user.patient
+        except Patient.DoesNotExist:
+            messages.error(request, "Patient profile not found.")
+            return redirect("home")
+
         Appointment.objects.create(
             patient=patient,
             doctor=form.cleaned_data["doctor"],
@@ -74,6 +90,10 @@ def book_appointment(request):
             "Your appointment request has been submitted. Our team will confirm soon.",
         )
         return redirect("appointment_success")
+    
+    # Pre-fill name and email/phone if possible? 
+    # The form currently doesn't accept initial values nicely without modifying form class or passing initial dictionary.
+    # For now, just render.
     return render(
         request,
         "book_appointment.html",
@@ -85,23 +105,21 @@ def appointment_success(request):
     return render(request, "success.html")
 
 
+
+@login_required
 def appointment_history(request):
-    appointments = None
-    email = None
-    if request.method == "POST":
-        email = request.POST.get("email")
-        if email:
-            appointments = Appointment.objects.filter(
-                patient__email=email
-            ).select_related("doctor", "patient")
-            if not appointments:
-                messages.info(request, "No appointments found for the given email.")
-        else:
-            messages.error(request, "Please provide an email address.")
+    try:
+        patient = request.user.patient
+        appointments = Appointment.objects.filter(
+            patient=patient
+        ).select_related("doctor", "patient").order_by("-date", "-time")
+    except Patient.DoesNotExist:
+         appointments = []
+
     return render(
         request,
         "appointment_history.html",
-        {"appointments": appointments, "email": email},
+        {"appointments": appointments},
     )
 
 
@@ -187,6 +205,62 @@ def admin_specializations(request):
         "admin/specializations.html",
         {"form": form, "specializations": specializations},
     )
+
+
+@staff_required()
+def admin_specialization_detail(request, pk):
+    specialization = get_object_or_404(Specialization, pk=pk)
+    data = {
+        "id": specialization.id,
+        "name": specialization.name,
+        "doctor_count": specialization.doctor_set.count(),
+    }
+    return JsonResponse(data)
+
+
+@staff_required()
+def admin_specialization_edit(request, pk):
+    specialization = get_object_or_404(Specialization, pk=pk)
+    # Handle JSON (AJAX) update
+    if request.content_type == "application/json":
+        try:
+            import json
+
+            payload = json.loads(request.body.decode("utf-8") or "{}")
+            name = payload.get("name", "").strip()
+            if not name:
+                return JsonResponse({"error": "Name is required."}, status=400)
+            specialization.name = name
+            specialization.save()
+            return JsonResponse({"id": specialization.id, "name": specialization.name})
+        except Exception as exc:  # pragma: no cover - simplified error handling
+            return JsonResponse({"error": str(exc)}, status=400)
+
+    # Normal form-based edit
+    form = SpecializationForm(request.POST or None, instance=specialization)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Specialization updated.")
+        return redirect("admin_specializations")
+    return render(
+        request,
+        "admin/specialization_form.html",
+        {"form": form, "specialization": specialization},
+    )
+
+
+@staff_required()
+def admin_specialization_delete(request, pk):
+    if request.method != 'POST':
+        return HttpResponseBadRequest('Invalid method')
+    specialization = get_object_or_404(Specialization, pk=pk)
+    # Set affected doctors' specialization to null and delete
+    from .models import Doctor
+
+    Doctor.objects.filter(specialization=specialization).update(specialization=None)
+    specialization.delete()
+    messages.success(request, "Specialization removed and assigned doctors cleared.")
+    return redirect("admin_specializations")
 
 
 @staff_required()

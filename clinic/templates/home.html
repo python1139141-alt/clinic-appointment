@@ -20,7 +20,8 @@
     </div>
     <div class="col-md-6 text-center mt-4 mt-md-0">
         <img src="https://images.pexels.com/photos/6129682/pexels-photo-6129682.jpeg?auto=compress&cs=tinysrgb&w=800"
-             alt="Doctor Appointment" class="img-fluid rounded-4 shadow-lg hero-illustration" style="max-height: 360px; object-fit: cover; width: 100%;">
+            alt="Doctor Appointment" class="img-fluid rounded-4 shadow-lg hero-illustration"
+            style="max-height: 360px; object-fit: cover; width: 100%;">
     </div>
 </div>
 
@@ -80,35 +81,33 @@
 </div>
 <div class="row">
     {% for doctor in featured_doctors %}
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title mb-1">{{ doctor.name }}</h5>
-                    <p class="text-muted mb-1">
-                        {{ doctor.specialization.name }}
-                    </p>
-                    <p class="mb-1">
-                        <small class="text-muted">
-                            {{ doctor.experience }} years experience • Fee: {{ doctor.fees }}
-                        </small>
-                    </p>
-                    <p class="mb-2">
-                        <small>
-                            <i class="bi bi-calendar-week"></i>
-                            {{ doctor.available_days }}
-                        </small>
-                    </p>
-                    <a href="{% url 'doctor_detail' doctor.pk %}" class="btn btn-outline-primary btn-sm">
-                        View Profile
-                    </a>
-                </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title mb-1">{{ doctor.name }}</h5>
+                <p class="text-muted mb-1">
+                    {{ doctor.specialization.name }}
+                </p>
+                <p class="mb-1">
+                    <small class="text-muted">
+                        {{ doctor.experience }} years experience • Fee: PKR {{ doctor.fees }}
+                    </small>
+                </p>
+                <p class="mb-2">
+                    <small>
+                        <i class="bi bi-calendar-week"></i>
+                        {{ doctor.available_days }}
+                    </small>
+                </p>
+                <a href="{% url 'doctor_detail' doctor.pk %}" class="btn btn-outline-primary btn-sm">
+                    View Profile
+                </a>
             </div>
         </div>
+    </div>
     {% endfor %}
 </div>
 {% else %}
 <p class="text-muted">No doctors added yet. Please login to admin and create some doctors.</p>
 {% endif %}
 {% endblock %}
-
-

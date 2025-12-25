@@ -13,7 +13,9 @@ class Specialization(models.Model):
 
 class Doctor(models.Model):
     name = models.CharField(max_length=200)
-    specialization = models.ForeignKey(Specialization, on_delete=models.CASCADE)
+    specialization = models.ForeignKey(
+        Specialization, on_delete=models.SET_NULL, null=True, blank=True
+    )
     experience = models.IntegerField(help_text="Experience in years")
     fees = models.IntegerField(help_text="Consultation fees in local currency")
     available_days = models.CharField(
@@ -46,6 +48,7 @@ class Patient(models.Model):
     name = models.CharField(max_length=200)
     phone = models.CharField(max_length=20)
     email = models.EmailField(unique=True)
+    user = models.OneToOneField("auth.User", on_delete=models.CASCADE, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
